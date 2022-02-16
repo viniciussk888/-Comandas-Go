@@ -7,7 +7,7 @@ export function SidebarNav () {
   return (
     <Stack spacing="12" align="flex-start">
       <NavSection title="GERAL">
-        <NavLink icon={RiFileCopy2Line} href="/comanda">Comandas</NavLink>
+        <NavLink icon={RiFileCopy2Line} href="/comandas">Comandas</NavLink>
        {/*  <NavLink icon={RiFileCopy2Line} href="/dashboard">Dashboard</NavLink> */}
         <NavLink icon={RiShoppingCart2Line} href="/products">Produtos</NavLink>
       </NavSection>
