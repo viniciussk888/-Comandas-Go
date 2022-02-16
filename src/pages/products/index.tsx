@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Icon,
+  Skeleton,
   Stack,
   Table,
   Tbody,
@@ -65,51 +66,60 @@ export default function Home() {
               </Button>
             </Link>
           </Flex>
-
-          <Table colorScheme="whiteAlpha">
-            <Thead>
-              <Tr>
-                <Th>Nome</Th>
-                {isWideVersion && <Th>Descrição</Th>}
-                <Th>Valor</Th>
-                <Th>Ações</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {products.map((product) => (
-                <Tr key={product.id}>
-                  <Td px={["4", "4", "6"]}>
-                    <Text colorScheme="bold">{product.name}</Text>
-                  </Td>
-                  {isWideVersion && (
-                    <Td px={["4", "4", "6"]}>{product.description}</Td>
-                  )}
-                  <Td px={["4", "4", "6"]}>R$ {product.value}</Td>
-                  <Td px={["4", "4", "6"]}>
-                    <Button
-                      mr="3"
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="purple"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                    >
-                      Editar
-                    </Button>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="red"
-                      leftIcon={<Icon as={RiDeleteBin3Line} fontSize="16" />}
-                    >
-                      Excluir
-                    </Button>
-                  </Td>
+          {products.length > 0 ? (
+            <Table colorScheme="whiteAlpha">
+              <Thead>
+                <Tr>
+                  <Th>Nome</Th>
+                  {isWideVersion && <Th>Descrição</Th>}
+                  <Th>Valor</Th>
+                  <Th>Ações</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {products.map((product) => (
+                  <Tr key={product.id}>
+                    <Td px={["4", "4", "6"]}>
+                      <Text colorScheme="bold">{product.name}</Text>
+                    </Td>
+                    {isWideVersion && (
+                      <Td px={["4", "4", "6"]}>{product.description}</Td>
+                    )}
+                    <Td px={["4", "4", "6"]}>R$ {Number(product.value).toPrecision(3)}</Td>
+                    <Td px={["4", "4", "6"]}>
+                      <Button
+                        mr="3"
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        colorScheme="purple"
+                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        colorScheme="red"
+                        leftIcon={<Icon as={RiDeleteBin3Line} fontSize="16" />}
+                      >
+                        Excluir
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          ) : (
+            <Stack>
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+            </Stack>
+          )}
 
           <Pagination />
         </Box>
