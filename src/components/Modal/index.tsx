@@ -18,7 +18,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { RiSearchLine } from "react-icons/ri";
+import {Input} from '../../components/form/Input'
 import { SearchBox } from "../Header/SearchBox";
 
 interface Items {
@@ -68,53 +68,50 @@ export function Modal({
 
   const sumTotalItems = () => {
     return items.reduce((acc, item) => acc + item.value, 0);
-  }
+  };
 
   const renderContentModal = () => {
     switch (type) {
       case "add-product":
         return (
-          <ModalContent>
-            <ModalHeader color="black">
-              Lançar produto{" "}
+          <ModalContent backgroundColor='gray.900'>
+            <ModalHeader color="white">
               <Badge fontSize="0.8em" colorScheme="red">
-                Comanda Nº {number}
+              Lançar produto comanda Nº {number}
               </Badge>
             </ModalHeader>
-            <ModalCloseButton color="black" />
+            <ModalCloseButton color="white" />
             <ModalBody>
               <SearchBox />
             </ModalBody>
-            <ModalFooter color="black">
-              <Button onClick={closeModal}>Cancelar</Button>
-            </ModalFooter>
           </ModalContent>
         );
       case "view-items":
         return (
-          <ModalContent>
-            <ModalHeader color="black">
-              Items da{" "}
+          <ModalContent backgroundColor='gray.800'>
+            <ModalHeader color="white">
               <Badge fontSize="0.8em" colorScheme="red">
-                Comanda Nº {number}
+              Items da comanda Nº {number}
               </Badge>
             </ModalHeader>
-            <ModalCloseButton color="black" />
+            <ModalCloseButton color="white" />
             <ModalBody>
               <Table size="sm">
                 <Thead>
                   <Tr>
-                    <Th>Nome</Th>
-                    <Th>Descrição</Th>
-                    <Th isNumeric>Valor</Th>
+                    <Th color="white">Nome</Th>
+                    <Th color="white">Descrição</Th>
+                    <Th color="white" isNumeric>Valor</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {items.map((item) => (
                     <Tr key={item.id}>
-                      <Td color='black'>{item.name}</Td>
-                      <Td color='black'>{item.description}</Td>
-                      <Td color='black' isNumeric>{item?.value?.toPrecision(4)}</Td>
+                      <Td color="white">{item.name}</Td>
+                      <Td color="white">{item.description}</Td>
+                      <Td color="white" isNumeric>
+                        {item?.value?.toPrecision(4)}
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -122,13 +119,61 @@ export function Modal({
                   <Tr>
                     <Th></Th>
                     <Th></Th>
-                    <Th isNumeric>Total: R$ {sumTotalItems().toPrecision(4)}</Th>
+                    <Th color="white" isNumeric>
+                      Total: R$ {sumTotalItems().toPrecision(4)}
+                    </Th>
                   </Tr>
                 </Tfoot>
               </Table>
             </ModalBody>
+          </ModalContent>
+        );
+      case "close-comand":
+        return (
+          <ModalContent backgroundColor='gray.800'>
+            <ModalHeader color="black">
+              <Badge fontSize="0.8em" colorScheme="red">
+              Fechar comanda Nº {number}
+              </Badge>
+            </ModalHeader>
+            <ModalCloseButton color="white" />
+            <ModalBody>
+              <Table size="sm">
+                <Thead>
+                  <Tr>
+                    <Th color="white">Nome</Th>
+                    <Th color="white">Descrição</Th>
+                    <Th color="white" isNumeric>Valor</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {items.map((item) => (
+                    <Tr key={item.id}>
+                      <Td color="white">{item.name}</Td>
+                      <Td color="white">{item.description}</Td>
+                      <Td color="white" isNumeric>
+                        {item?.value?.toPrecision(4)}
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+                <Tfoot>
+                  <Tr>
+                    <Th></Th>
+                    <Th></Th>
+                    <Th color="white" isNumeric>
+                      Total: R$ {sumTotalItems().toPrecision(4)}
+                    </Th>
+                  </Tr>
+                </Tfoot>
+              </Table>
+              <Input
+            name="pay-value"
+            label="Valor pago"
+          />
+            </ModalBody>
             <ModalFooter color="black">
-              <Button onClick={closeModal}>Cancelar</Button>
+              <Button color='#fff' background='red' onClick={()=>{}}>Finaliza comanda</Button>
             </ModalFooter>
           </ModalContent>
         );

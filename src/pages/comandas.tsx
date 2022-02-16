@@ -179,6 +179,7 @@ export default function Comandas() {
     lg: false,
     md: false,
   });
+
   return (
     <Flex direction="column" h="100vh">
       <Header />
@@ -217,7 +218,6 @@ export default function Comandas() {
                 number={comanda.number}
                 open={comanda.open}
                 items={comanda.items}
-                total={comanda.total}
                 document={comanda.document}
               />
             ))}

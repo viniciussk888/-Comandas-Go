@@ -38,7 +38,6 @@ interface ComandaProps {
   document?: string;
   contact: string;
   number: number;
-  total: number;
   items: Items[];
   open: boolean;
 }
@@ -51,10 +50,13 @@ export function Comanda({
   number,
   open,
   contact,
-  total,
 }: ComandaProps) {
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState(null);
+
+  const sumTotalItems = () => {
+    return items.reduce((acc, item) => acc + item.value, 0);
+  }
 
   return (
     <Flex mt={6} mr={3} maxWidth="320px" bg={"gray.50"} borderRadius={8} p={4}>
@@ -70,7 +72,7 @@ export function Comanda({
         </StatLabel>
         <StatHelpText color="black">Contato: {contact}</StatHelpText>
         <StatNumber mb={2} color="black">
-          Total R$ {total}
+          Total R$ {sumTotalItems().toPrecision(4)}
         </StatNumber>
         <Menu>
           <MenuButton as={Button} colorScheme="pink">
@@ -95,7 +97,10 @@ export function Comanda({
             >
               Ver items
             </MenuItem>
-            <MenuItem color="red">Fechar comanda</MenuItem>
+            <MenuItem color="red" onClick={() => {
+                setTypeModal("close-comand");
+                setOpenModal(true);
+              }}>Fechar comanda</MenuItem>
           </MenuList>
         </Menu>
       </Stat>
