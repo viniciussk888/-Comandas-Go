@@ -1,45 +1,73 @@
-import { Box, Button, Divider, Flex, Heading, HStack, SimpleGrid, VStack } from '@chakra-ui/react'
-import Link from 'next/link'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Heading,
+  HStack,
+  SimpleGrid,
+  VStack,
+} from "@chakra-ui/react";
+import Link from "next/link";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-import { Input } from '../../components/form/Input'
-import { Header } from '../../components/Header'
-import { SideBar } from '../../components/Sidebar'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { Input } from "../../components/form/Input";
+import { Header } from "../../components/Header";
+import { SideBar } from "../../components/Sidebar";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { supabase } from "../../utils/supabaseClient";
+import { Alert } from "../../components/Alert";
+import { useState } from "react";
 
-type CreateUserData = {
-  name: string
-  email: string
-  password: string
-  passowrd_confirmation: string
-}
+type CreateProductData = {
+  name: string;
+  description: string;
+  value: number;
+};
 
 const createUserSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
-  email: yup.string().required("Email obrigatório").email("E-mail inválido"),
-  password: yup.string().required("Senha obrigatória").min(6, "No mínimo 6 caracteres"),
-  password_confirmation: yup.string().oneOf([
-    null, yup.ref("password")
-  ], "As senhas precisam ser iguais")
-})
+  description: yup.string().required("Descrição obrigatória"),
+  value: yup.string().required("Valor obrigatório"),
+});
 
 export default function CreateUser() {
-  const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createUserSchema)
-  })
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const { register, handleSubmit, formState,reset } = useForm({
+    resolver: yupResolver(createUserSchema),
+  });
 
-  const { errors } = formState
+  const { errors } = formState;
 
-  const handleCreateUser: SubmitHandler<CreateUserData> = async (data) => {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log(data)
-  }
+  const handleCreateUser: SubmitHandler<CreateProductData> = async (
+    product
+  ) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const { status, error } = await supabase
+      .from("Products")
+      .insert(product);
+    if (error) {
+      setOpenAlert(true);
+      setErrorMessage(error.message);
+      return console.log(error);
+    }
+    if (status === 201) {
+      setOpenAlert(true);
+      reset()
+      setErrorMessage('Produto criado com sucesso');
+    }
+  };
 
   return (
     <Box>
       <Header />
-
+      <Alert
+        message={errorMessage}
+        openAlert={openAlert}
+        setOpenAlert={setOpenAlert}
+      />
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <SideBar />
 
@@ -51,7 +79,9 @@ export default function CreateUser() {
           p={["6", "8"]}
           onSubmit={handleSubmit(handleCreateUser)}
         >
-          <Heading size="lg" fontWeight="normal">Criar usuário</Heading>
+          <Heading size="lg" fontWeight="normal">
+            Cadastrar produto
+          </Heading>
 
           <Divider my="6" borderColor="gray.700" />
 
@@ -59,44 +89,33 @@ export default function CreateUser() {
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Input
                 name="name"
-                label="Nome completo"
+                label="Nome"
                 error={errors?.name}
                 {...register("name")}
               />
               <Input
-                name="email"
-                type="email"
-                label="E-mail"
-                error={errors?.email}
-                {...register("email")}
+                name="value"
+                label="Valor"
+                type="number"
+                error={errors?.value}
+                {...register("value")}
               />
             </SimpleGrid>
 
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Input
-                name="password"
-                type="password"
-                label="Senha"
-                error={errors?.password}
-                {...register("password")}
-              />
-              <Input
-                name="password_confirmation"
-                type="password"
-                label="Confirmação de senha"
-                error={errors?.password_confirmation}
-                {...register("password_confirmation")}
+                name="description"
+                label="Descrição"
+                error={errors?.description}
+                {...register("description")}
               />
             </SimpleGrid>
           </VStack>
 
           <Flex mt="8" justify="flex-end">
             <HStack spacing="4">
-              <Link href="/users" passHref>
-                <Button
-                  as="a"
-                  colorScheme="whiteAlpha"
-                >
+              <Link href="/products" passHref>
+                <Button as="a" colorScheme="whiteAlpha">
                   Cancelar
                 </Button>
               </Link>
@@ -112,5 +131,5 @@ export default function CreateUser() {
         </Box>
       </Flex>
     </Box>
-  )
+  );
 }

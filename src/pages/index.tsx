@@ -1,39 +1,61 @@
-import { Button, Flex, Stack } from '@chakra-ui/react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
-import { Input } from '../components/form/Input'
+import { Button, Flex, Stack } from "@chakra-ui/react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { Input } from "../components/form/Input";
+import { supabase } from "../utils/supabaseClient";
+import { Alert } from "../components/Alert";
+import { useState } from "react";
+import Router from "next/router";
+import { Logo } from "../components/Header/Logo";
 
 type SignInFormData = {
-  email: string
-  passowrd: string
-}
+  email: string;
+  passowrd: string;
+};
 
 const signInSchema = yup.object().shape({
   email: yup.string().required("Email obrigatório").email("E-mail inválido"),
   password: yup.string().required("Senha obrigatória"),
-})
+});
 
 export default function SignIn() {
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(signInSchema)
-  })
+    resolver: yupResolver(signInSchema),
+  });
 
-  const { errors } = formState
+  const [alertMessage, setAlertMessage] = useState("");
+  const [openAlert, setOpenAlert] = useState(false);
+
+  const { errors } = formState;
 
   const handleSignIn: SubmitHandler<SignInFormData> = async (data) => {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log(data)
-  }
+    const { user, error } = await supabase.auth.signIn(data);
+    if (error) {
+      setOpenAlert(true);
+      setAlertMessage(error.message);
+      return console.log(error);
+    }
+    localStorage.setItem("@comandasgo", JSON.stringify(user));
+    Router.push("/comandas");
+  };
 
   return (
     <Flex
       w="100vw"
       h="100vh"
+      flexDirection="column"
       alignItems="center"
       justify="center"
     >
+      <Logo />
+      <Alert
+        message={alertMessage}
+        openAlert={openAlert}
+        setOpenAlert={setOpenAlert}
+      />
       <Flex
+        mt="6"
         flexDirection="column"
         as="form"
         width="100%"
@@ -48,14 +70,17 @@ export default function SignIn() {
             name="email"
             label="Email"
             error={errors?.email}
-            { ...register("email", { required: 'Campo email obrigatório' }) }
+            {...register("email", { required: "Campo email obrigatório" })}
           />
           <Input
             name="password"
             label="Senha"
             type="password"
             error={errors?.password}
-            { ...register("password", { required: 'Campo senha obrigatório', maxLength: 2 }) }
+            {...register("password", {
+              required: "Campo senha obrigatório",
+              maxLength: 2,
+            })}
           />
         </Stack>
         <Button
@@ -63,8 +88,10 @@ export default function SignIn() {
           mt="6"
           colorScheme="pink"
           isLoading={formState.isSubmitting}
-        >Entrar</Button>
+        >
+          Entrar
+        </Button>
       </Flex>
     </Flex>
-  )
+  );
 }

@@ -119,7 +119,7 @@ export function Modal({
                   <Tr>
                     <Th></Th>
                     <Th></Th>
-                    <Th color="white" isNumeric>
+                    <Th fontSize='1rem' color="white" isNumeric>
                       Total: R$ {sumTotalItems().toPrecision(4)}
                     </Th>
                   </Tr>
