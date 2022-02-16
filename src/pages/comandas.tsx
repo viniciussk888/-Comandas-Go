@@ -1,66 +1,184 @@
-import { Box, Flex, SimpleGrid, Text, theme } from "@chakra-ui/react";
-import { ApexOptions } from "apexcharts";
-import dynamic from 'next/dynamic';
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  SimpleGrid,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { Comanda } from "../components/Comanda";
 import { Header } from "../components/Header";
 import { SideBar } from "../components/Sidebar";
 
-const Chart = dynamic(() => import ('react-apexcharts'), {
-  ssr: false
-})
+const comandas = [
+  {
+    id: "1",
+    name: "João",
+    document: "123.456.789-10",
+    contact: "99999-9999",
+    number: 1,
+    total: 100,
+    items: [
+      {
+        id: "1",
+        name: "Coca-Cola",
+        description: "Refrigerante",
+        value: 10,
 
-const options: ApexOptions = {
-  chart: {
-    toolbar: {
-      show: false
-    },
-    zoom: {
-      enabled: false
-    },
-    foreColor: theme.colors.gray[500]
-  },
-  grid: {
-    show: false
-  },
-  dataLabels: {
-    enabled: false
-  },
-  tooltip: {
-    enabled: false
-  },
-  xaxis: {
-    type: 'datetime',
-    axisBorder: {
-      color: theme.colors.gray[600]
-    },
-    axisTicks: {
-      color: theme.colors.gray[600]
-    },
-    categories: [
-      '2022-01-02T10:00:00.000Z',
-      '2022-01-04T14:00:00.000Z',
-      '2022-01-06T15:00:00.000Z',
-      '2022-01-20T18:00:00.000Z',
-      '2022-01-21T22:00:00.000Z',
-      '2022-01-23T22:30:00.000Z',
-      '2022-01-30T23:59:00.000Z'
-    ]
-  },
-  fill: {
-    opacity: 0.3,
-    type: 'gradient',
-    gradient: {
-      shade: 'dark',
-      opacityFrom: 0.7,
-      opacityTo: 0.3
-    }
-  }
-}
+      },
+      {
+        id: "2",
+        name: "Coca-Cola 2",
+        description: "Refrigerante 2",
+        value: 10,
 
-const series = [
-  { name: 'Series 1', data: [ 31, 25, 10, 31, 59, 60, 90 ] }
-]
+      },
+      {
+        id: "3",
+        name: "Coca-Cola 3",
+        description: "Refrigerante 3",
+        value: 10,
 
-export default function Dashboard() {
+      },
+    ],
+    open: true,
+  },
+  {
+    id: "2",
+    name: "Maria",
+    document: "123.456.789-10",
+    contact: "99999-9999",
+    number: 2,
+    total: 100,
+    items: [
+      {
+        id: "1",
+        name: "Coca-Cola",
+        description: "Refrigerante",
+        value: 10,
+
+      },
+      {
+        id: "2",
+        name: "Coca-Cola 2",
+        description: "Refrigerante 2",
+        value: 10,
+
+      },
+      {
+        id: "3",
+        name: "Coca-Cola 3",
+        description: "Refrigerante 3",
+        value: 10,
+
+      },
+    ],
+    open: true,
+  },
+  {
+    id: "3",
+    name: "Pedro",
+    document: "123.456.789-10",
+    contact: "99999-9999",
+    number: 3,
+    total: 100,
+    items: [
+      {
+        id: "1",
+        name: "Coca-Cola",
+        description: "Refrigerante",
+        value: 10,
+
+      },
+      {
+        id: "2",
+        name: "Coca-Cola 2",
+        description: "Refrigerante 2",
+        value: 10,
+
+      },
+      {
+        id: "3",
+        name: "Coca-Cola 3",
+        description: "Refrigerante 3",
+        value: 10,
+
+      },
+    ],
+    open: true,
+  },
+  {
+    id: "4",
+    name: "João",
+    document: "123.456.789-10",
+    contact: "99999-9999",
+    number: 4,
+    total: 100,
+    items: [
+      {
+        id: "1",
+        name: "Coca-Cola",
+        description: "Refrigerante",
+        value: 10.9,
+
+      },
+      {
+        id: "2",
+        name: "Coca-Cola 2",
+        description: "Refrigerante 2",
+        value: 48.9,
+
+      },
+      {
+        id: "3",
+        name: "Coca-Cola 3",
+        description: "Refrigerante 3",
+        value: 10,
+
+      },
+    ],
+    open: true,
+  },
+  {
+    id: "5",
+    name: "Maria",
+    document: "123.456.789-10",
+    contact: "99999-9999",
+    number: 5,
+    total: 100,
+    items: [
+      {
+        id: "1",
+        name: "Coca-Cola",
+        description: "Refrigerante",
+        value: 10,
+
+      },
+      {
+        id: "2",
+        name: "Coca-Cola 2",
+        description: "Refrigerante 2",
+        value: 10,
+
+      },
+      {
+        id: "3",
+        name: "Coca-Cola 3",
+        description: "Refrigerante 3",
+        value: 10,
+
+      },
+    ],
+    open: true,
+  },
+];
+
+export default function Comandas() {
+  const isWideVersion = useBreakpointValue({
+    base: true,
+    lg: false,
+    md: false,
+  });
   return (
     <Flex direction="column" h="100vh">
       <Header />
@@ -68,26 +186,44 @@ export default function Dashboard() {
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <SideBar />
 
-        <SimpleGrid flex="1" gap="4" minChildWidth="320px" align="flex-start">
-          <Box
-            p={["6", "8"]}
-            bg="gray.800"
-            borderRadius={8}
-            pb={4}
+        <Box
+          w="100%"
+          p={["6", "8"]}
+          bg="gray.800"
+          borderRadius={8}
+          pb={4}
+          flexDirection={"column"}
+        >
+          <Flex w="100%" justifyContent={"space-between"} flexDirection={"row"}>
+            <Text fontSize="lg" mb="4">
+              Comandas abertas
+            </Text>
+            <Button type="submit" colorScheme="pink">
+              Abrir comanda
+            </Button>
+          </Flex>
+          <SimpleGrid
+            maxHeight="600px"
+            overflow="auto"
+            columns={isWideVersion ? 1 : 3}
+            spacing={2}
           >
-            <Text fontSize="lg" mb="4">Inscritos da semana</Text>
-            <Chart options={options} series={series} type="area" height={160} />
-          </Box>
-          <Box
-            p={["6", "8"]}
-            bg="gray.800"
-            borderRadius={8}
-          >
-            <Text fontSize="large" mb="4">Taxa de abertura</Text>
-            <Chart options={options} series={series} type="area" height={160} />
-          </Box>
-        </SimpleGrid>
+            {comandas.map((comanda) => (
+              <Comanda
+                key={comanda.id}
+                id={comanda.id}
+                name={comanda.name}
+                contact={comanda.contact}
+                number={comanda.number}
+                open={comanda.open}
+                items={comanda.items}
+                total={comanda.total}
+                document={comanda.document}
+              />
+            ))}
+          </SimpleGrid>
+        </Box>
       </Flex>
     </Flex>
-  )
+  );
 }

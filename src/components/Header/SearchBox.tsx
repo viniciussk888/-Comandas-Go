@@ -21,7 +21,7 @@ export function SearchBox () {
         variant="unstyled"
         px="4"
         mr="4"
-        placeholder="Buscar na plataforma"
+        placeholder="Digite o nome do produto"
         _placeholder={{ color: "gray.400" }}
       />
 

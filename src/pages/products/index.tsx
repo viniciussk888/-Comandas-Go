@@ -47,7 +47,6 @@ export default function Home() {
                 </Td>
                 <Td px={["4", "4", "6"]}>
                   <Text colorScheme="bold">Cerveja Skoll 600ml</Text>
-                  <Text fontSize="sm" color="gray.300">vinicius.cross07@gmail.com</Text>
                 </Td>
                 { isWideVersion && <Td px={["4", "4", "6"]}>R$ 8,00</Td> }
                 <Td px={["4", "4", "6"]}>
