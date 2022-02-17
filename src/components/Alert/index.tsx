@@ -44,11 +44,18 @@ export function Alert({ message, openAlert, setOpenAlert }: AlertProps) {
         <AlertDialogOverlay />
 
         <AlertDialogContent>
-          <AlertDialogHeader color='black'>Atenção!</AlertDialogHeader>
+          <AlertDialogHeader color="black">Atenção!</AlertDialogHeader>
           <AlertDialogCloseButton />
-          <AlertDialogBody color='black'>{message}</AlertDialogBody>
+          <AlertDialogBody color="black">{message}</AlertDialogBody>
           <AlertDialogFooter>
-            <Button backgroundColor='red' ref={cancelRef} onClick={closeAlert}>
+            <Button
+              backgroundColor="red"
+              _hover={{
+                bgColor: "red.500",
+              }}
+              ref={cancelRef}
+              onClick={closeAlert}
+            >
               OK
             </Button>
           </AlertDialogFooter>

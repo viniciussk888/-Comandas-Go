@@ -17,8 +17,7 @@ import { Header } from "../../components/Header";
 import { SideBar } from "../../components/Sidebar";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { supabase } from "../../utils/supabaseClient";
-import { Alert } from "../../components/Alert";
-import { useState } from "react";
+import { useAlert } from "../../contexts/AlertContext";
 
 type CreateProductData = {
   name: string;
@@ -32,9 +31,8 @@ const createUserSchema = yup.object().shape({
   value: yup.string().required("Valor obrigatório"),
 });
 
-export default function CreateUser() {
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
+export default function CreateProduct() {
+  const { setMessage,setOpenAlert } = useAlert()
   const { register, handleSubmit, formState,reset } = useForm({
     resolver: yupResolver(createUserSchema),
   });
@@ -44,30 +42,24 @@ export default function CreateUser() {
   const handleCreateUser: SubmitHandler<CreateProductData> = async (
     product
   ) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     const { status, error } = await supabase
       .from("Products")
       .insert(product);
     if (error) {
       setOpenAlert(true);
-      setErrorMessage(error.message);
+      setMessage(error.message);
       return console.log(error);
     }
     if (status === 201) {
       setOpenAlert(true);
       reset()
-      setErrorMessage('Produto criado com sucesso');
+      setMessage('Produto criado com sucesso');
     }
   };
 
   return (
     <Box>
       <Header />
-      <Alert
-        message={errorMessage}
-        openAlert={openAlert}
-        setOpenAlert={setOpenAlert}
-      />
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <SideBar />
 

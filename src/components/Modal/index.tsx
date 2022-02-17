@@ -8,6 +8,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
+  Stack,
   Table,
   Tbody,
   Td,
@@ -18,7 +20,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {Input} from '../../components/form/Input'
+import { Input } from "../../components/form/Input";
 import { SearchBox } from "../Header/SearchBox";
 
 interface Items {
@@ -74,10 +76,10 @@ export function Modal({
     switch (type) {
       case "add-product":
         return (
-          <ModalContent backgroundColor='gray.900'>
+          <ModalContent backgroundColor="gray.900">
             <ModalHeader color="white">
               <Badge fontSize="0.8em" colorScheme="red">
-              Lançar produto comanda Nº {number}
+                Lançar produto comanda Nº {number}
               </Badge>
             </ModalHeader>
             <ModalCloseButton color="white" />
@@ -88,10 +90,10 @@ export function Modal({
         );
       case "view-items":
         return (
-          <ModalContent backgroundColor='gray.800'>
+          <ModalContent backgroundColor="gray.800">
             <ModalHeader color="white">
               <Badge fontSize="0.8em" colorScheme="red">
-              Items da comanda Nº {number}
+                Items da comanda Nº {number}
               </Badge>
             </ModalHeader>
             <ModalCloseButton color="white" />
@@ -101,7 +103,53 @@ export function Modal({
                   <Tr>
                     <Th color="white">Nome</Th>
                     <Th color="white">Descrição</Th>
-                    <Th color="white" isNumeric>Valor</Th>
+                    <Th color="white" isNumeric>
+                      Valor
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {items.map((item) => (
+                    <Tr key={item.id}>
+                      <Td color="white">{item.name}</Td>
+                      <Td color="white">{item.description}</Td>
+                      <Td color="white" isNumeric>
+                        {item?.value?.toPrecision(4)}
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+                <Tfoot>
+                  <Tr>
+                    <Th></Th>
+                    <Th></Th>
+                    <Th fontSize="1rem" color="white" isNumeric>
+                      Total: R$ {sumTotalItems().toPrecision(4)}
+                    </Th>
+                  </Tr>
+                </Tfoot>
+              </Table>
+            </ModalBody>
+          </ModalContent>
+        );
+      case "close-comand":
+        return (
+          <ModalContent backgroundColor="gray.800">
+            <ModalHeader color="black">
+              <Badge fontSize="0.8em" colorScheme="red">
+                Fechar comanda Nº {number}
+              </Badge>
+            </ModalHeader>
+            <ModalCloseButton color="white" />
+            <ModalBody>
+              <Table size="sm">
+                <Thead>
+                  <Tr>
+                    <Th color="white">Nome</Th>
+                    <Th color="white">Descrição</Th>
+                    <Th color="white" isNumeric>
+                      Valor
+                    </Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -125,55 +173,27 @@ export function Modal({
                   </Tr>
                 </Tfoot>
               </Table>
-            </ModalBody>
-          </ModalContent>
-        );
-      case "close-comand":
-        return (
-          <ModalContent backgroundColor='gray.800'>
-            <ModalHeader color="black">
-              <Badge fontSize="0.8em" colorScheme="red">
-              Fechar comanda Nº {number}
-              </Badge>
-            </ModalHeader>
-            <ModalCloseButton color="white" />
-            <ModalBody>
-              <Table size="sm">
-                <Thead>
-                  <Tr>
-                    <Th color="white">Nome</Th>
-                    <Th color="white">Descrição</Th>
-                    <Th color="white" isNumeric>Valor</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {items.map((item) => (
-                    <Tr key={item.id}>
-                      <Td color="white">{item.name}</Td>
-                      <Td color="white">{item.description}</Td>
-                      <Td color="white" isNumeric>
-                        {item?.value?.toPrecision(4)}
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-                <Tfoot>
-                  <Tr>
-                    <Th></Th>
-                    <Th></Th>
-                    <Th color="white" isNumeric>
-                      Total: R$ {sumTotalItems().toPrecision(4)}
-                    </Th>
-                  </Tr>
-                </Tfoot>
-              </Table>
-              <Input
-            name="pay-value"
-            label="Valor pago"
-          />
+              <Stack mt='5' spacing={3}>
+                <Select variant="outline" placeholder="Forma de pagamento">
+                  <option value="dinheiro" style={{backgroundColor:'#1F2029'}}>Dinheiro</option>
+                  <option value="pix" style={{backgroundColor:'#1F2029'}}>Pix</option>
+                  <option value="cartao-debito" style={{backgroundColor:'#1F2029'}}>Cartão Debito</option>
+                  <option value="cartao-credito" style={{backgroundColor:'#1F2029'}}>Cartão Credito</option>
+                </Select>
+                <Input name="obs" label="Observação" />
+              </Stack>
             </ModalBody>
             <ModalFooter color="black">
-              <Button color='#fff' background='red' onClick={()=>{}}>Finaliza comanda</Button>
+              <Button
+                _hover={{
+                  bgColor: "red.500",
+                }}
+                color="#fff"
+                background="red"
+                onClick={() => {}}
+              >
+                Finaliza comanda
+              </Button>
             </ModalFooter>
           </ModalContent>
         );

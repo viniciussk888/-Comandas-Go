@@ -5,9 +5,10 @@ import * as yup from "yup";
 import { Input } from "../components/form/Input";
 import { supabase } from "../utils/supabaseClient";
 import { Alert } from "../components/Alert";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Router from "next/router";
 import { Logo } from "../components/Header/Logo";
+import {useAlert} from '../contexts/AlertContext';
 
 type SignInFormData = {
   email: string;
@@ -24,8 +25,7 @@ export default function SignIn() {
     resolver: yupResolver(signInSchema),
   });
 
-  const [alertMessage, setAlertMessage] = useState("");
-  const [openAlert, setOpenAlert] = useState(false);
+  const { setMessage,setOpenAlert } = useAlert()
 
   const { errors } = formState;
 
@@ -33,7 +33,7 @@ export default function SignIn() {
     const { user, error } = await supabase.auth.signIn(data);
     if (error) {
       setOpenAlert(true);
-      setAlertMessage(error.message);
+      setMessage(error.message);
       return console.log(error);
     }
     localStorage.setItem("@comandasgo", JSON.stringify(user));
@@ -49,11 +49,6 @@ export default function SignIn() {
       justify="center"
     >
       <Logo />
-      <Alert
-        message={alertMessage}
-        openAlert={openAlert}
-        setOpenAlert={setOpenAlert}
-      />
       <Flex
         mt="6"
         flexDirection="column"
