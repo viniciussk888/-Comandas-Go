@@ -23,12 +23,14 @@ import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { SideBar } from "../../components/Sidebar";
 import { supabase } from "../../utils/supabaseClient";
+import { formatValue } from "../../utils/formatValue";
 
 export default function Home() {
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
+  
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function Home() {
                     {isWideVersion && (
                       <Td px={["4", "4", "6"]}>{product.description}</Td>
                     )}
-                    <Td px={["4", "4", "6"]}>R$ {Number(product.value).toPrecision(3)}</Td>
+                    <Td px={["4", "4", "6"]}>{formatValue(product.value)}</Td>
                     <Td px={["4", "4", "6"]}>
                       <Button
                         mr="3"
