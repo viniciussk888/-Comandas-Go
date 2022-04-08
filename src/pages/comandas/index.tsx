@@ -5,6 +5,8 @@ import {
   Button,
   SimpleGrid,
   useBreakpointValue,
+  Stack,
+  Skeleton
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Comanda } from "../../components/Comanda";
@@ -19,18 +21,14 @@ export default function Comandas() {
     lg: false,
     md: false,
   });
-  const { setMessage, setOpenAlert } = useAlert();
   const [comandas, setComandas] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const { data, error } = await supabase.from("Comands");
-      if (error) {
-        setOpenAlert(true);
-        setMessage(error?.message);
-        return console.log(error);
+      const { status, data } = await supabase.from("Comands");
+      if (status === 200) {
+        setComandas(data);
       }
-      setComandas(data);
     }
     fetchData();
   }, []);
@@ -41,7 +39,6 @@ export default function Comandas() {
 
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <SideBar />
-
         <Box
           w="100%"
           p={["6", "8"]}
@@ -58,6 +55,7 @@ export default function Comandas() {
               Abrir comanda
             </Button>
           </Flex>
+          {comandas.length > 0 ? (
           <SimpleGrid
             maxHeight="600px"
             overflow="auto"
@@ -79,6 +77,15 @@ export default function Comandas() {
                 />
               ))}
           </SimpleGrid>
+           ) : (
+            <Stack>
+              <Skeleton height="40px" mt="5" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+            </Stack>
+          )}
         </Box>
       </Flex>
     </Flex>
