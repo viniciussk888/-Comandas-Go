@@ -12,18 +12,20 @@ import Link from "next/link";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { Input } from "../../components/form/Input";
-import { Header } from "../../components/Header";
-import { SideBar } from "../../components/Sidebar";
+import { Input } from "../../../components/form/Input";
+import { Header } from "../../../components/Header";
+import { SideBar } from "../../../components/Sidebar";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { supabase } from "../../utils/supabaseClient";
-import { useAlert } from "../../contexts/AlertContext";
+import { supabase } from "../../../utils/supabaseClient";
+import { useAlert } from "../../../contexts/AlertContext";
+import { useRouter } from 'next/router';
 
 type CreateProductData = {
   name: string;
   description: string;
   value: number;
 };
+
 
 const createUserSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
@@ -36,6 +38,9 @@ export default function CreateProduct() {
   const { register, handleSubmit, formState,reset } = useForm({
     resolver: yupResolver(createUserSchema),
   });
+  const router = useRouter()
+  const { id } = router.query
+  console.log(id)
 
   const { errors } = formState;
 
@@ -45,6 +50,7 @@ export default function CreateProduct() {
     const { status, error } = await supabase
       .from("Products")
       .insert(product);
+      console.log({id});
     if (error) {
       setOpenAlert(true);
       setMessage(error.message);
@@ -55,6 +61,7 @@ export default function CreateProduct() {
       reset()
       setMessage('Produto criado com sucesso');
     }
+
   };
 
   return (

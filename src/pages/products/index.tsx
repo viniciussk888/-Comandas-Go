@@ -31,6 +31,7 @@ import { Pagination } from "../../components/Pagination";
 import { SideBar } from "../../components/Sidebar";
 import { supabase } from "../../utils/supabaseClient";
 import { formatValue } from "../../utils/formatValue";
+import { useRouter } from 'next/router'
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -39,6 +40,14 @@ export default function Home() {
     lg: true,
   });
 
+  const router = useRouter()
+
+  const Gotoedit = (id)=>{
+    router.push({
+      pathname: '/products/create',
+      query: { id },
+    })
+  }
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -69,6 +78,7 @@ export default function Home() {
     }
     setLoading(false);
   }
+
 
   return (
     <Box>
@@ -123,6 +133,8 @@ export default function Home() {
                         fontSize="sm"
                         colorScheme="purple"
                         leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                        onClick={()=>Gotoedit(product.id)}
+                  
                       >
                         Editar
                       </Button>
@@ -133,6 +145,7 @@ export default function Home() {
                         colorScheme="red"
                         leftIcon={<Icon as={RiDeleteBin3Line} fontSize="16" />}
                         onClick={onOpen}
+
                       >
                         Excluir
                       </Button>
