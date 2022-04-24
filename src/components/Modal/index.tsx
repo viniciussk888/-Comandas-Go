@@ -188,7 +188,7 @@ export function Modal({
             </ModalHeader>
             <ModalCloseButton color="white" />
             <ModalBody>
-              <Table size="sm">
+              <Table size="md">
                 <Thead>
                   <Tr>
                     <Th color="white">Nome</Th>
@@ -204,7 +204,7 @@ export function Modal({
                       <Td color="white">{item.name}</Td>
                       <Td color="white">{item.description}</Td>
                       <Td color="white" isNumeric>
-                        {item?.value?.toPrecision(4)}
+                        {formatValue(item?.value)}
                       </Td>
                     </Tr>
                   ))}
@@ -214,7 +214,7 @@ export function Modal({
                     <Th></Th>
                     <Th></Th>
                     <Th fontSize="1rem" color="white" isNumeric>
-                      Total: R$ {sumTotalItems().toPrecision(4)}
+                      Total: {formatValue(sumTotalItems())}
                     </Th>
                   </Tr>
                 </Tfoot>
@@ -232,7 +232,7 @@ export function Modal({
             </ModalHeader>
             <ModalCloseButton color="white" />
             <ModalBody>
-              <Table size="sm">
+              <Table size="md">
                 <Thead>
                   <Tr>
                     <Th color="white">Nome</Th>
@@ -248,7 +248,7 @@ export function Modal({
                       <Td color="white">{item.name}</Td>
                       <Td color="white">{item.description}</Td>
                       <Td color="white" isNumeric>
-                        {item?.value?.toPrecision(4)}
+                        {formatValue(item?.value)}
                       </Td>
                     </Tr>
                   ))}
@@ -258,7 +258,7 @@ export function Modal({
                     <Th></Th>
                     <Th></Th>
                     <Th fontSize='1rem' color="white" isNumeric>
-                      Total: R$ {sumTotalItems().toPrecision(4)}
+                      Total: {formatValue(sumTotalItems())}
                     </Th>
                   </Tr>
                 </Tfoot>
