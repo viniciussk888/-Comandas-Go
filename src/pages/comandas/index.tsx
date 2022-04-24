@@ -26,7 +26,7 @@ export default function Comandas() {
 
   useEffect(() => {
     async function fetchData() {
-      const { status, data } = await supabase.from("Comands");
+      const { status, data } = await supabase.from("Comands").select().order('number', { ascending: true });
       if (status === 200) {
         setComandas(data);
       }
