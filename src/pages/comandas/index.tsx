@@ -5,6 +5,9 @@ import {
   Button,
   SimpleGrid,
   useBreakpointValue,
+  Stack,
+  Skeleton,
+  Heading
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Comanda } from "../../components/Comanda";
@@ -19,18 +22,14 @@ export default function Comandas() {
     lg: false,
     md: false,
   });
-  const { setMessage, setOpenAlert } = useAlert();
   const [comandas, setComandas] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const { data, error } = await supabase.from("Comands");
-      if (error) {
-        setOpenAlert(true);
-        setMessage(error?.message);
-        return console.log(error);
+      const { status, data } = await supabase.from("Comands").select().order('number', { ascending: true });
+      if (status === 200) {
+        setComandas(data);
       }
-      setComandas(data);
     }
     fetchData();
   }, []);
@@ -41,44 +40,51 @@ export default function Comandas() {
 
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <SideBar />
-
         <Box
-          w="100%"
-          p={["6", "8"]}
-          bg="gray.800"
-          borderRadius={8}
-          pb={4}
-          flexDirection={"column"}
+          flex="1" borderRadius="8" bg="gray.800" p="8"
         >
           <Flex w="100%" justifyContent={"space-between"} flexDirection={"row"}>
-            <Text fontSize="lg" mb="4">
+            <Heading size="lg" fontWeight="normal">
               Comandas abertas
-            </Text>
-            <Button as="a" href="/comandas/create" colorScheme="pink">
+            </Heading>
+            <Button
+              size="sm"
+              fontSize="sm"
+              as="a" href="/comandas/create" colorScheme="pink">
               Abrir comanda
             </Button>
           </Flex>
-          <SimpleGrid
-            maxHeight="600px"
-            overflow="auto"
-            columns={isWideVersion ? 1 : 3}
-            spacing={2}
-          >
-            {comandas
-              .filter((comanda) => comanda.open === true)
-              .map((comanda) => (
-                <Comanda
-                  key={comanda.id}
-                  id={comanda.id}
-                  name={comanda.name}
-                  contact={comanda.contact}
-                  number={comanda.number}
-                  open={comanda.open}
-                  items={comanda.items}
-                  document={comanda.document}
-                />
-              ))}
-          </SimpleGrid>
+          {comandas.length > 0 ? (
+            <SimpleGrid
+              maxHeight="600px"
+              overflow="auto"
+              columns={isWideVersion ? 1 : 3}
+              spacing={2}
+            >
+              {comandas
+                .filter((comanda) => comanda.open === true)
+                .map((comanda) => (
+                  <Comanda
+                    key={comanda.id}
+                    id={comanda.id}
+                    name={comanda.name}
+                    contact={comanda.contact}
+                    number={comanda.number}
+                    open={comanda.open}
+                    items={comanda.items}
+                    document={comanda.document}
+                  />
+                ))}
+            </SimpleGrid>
+          ) : (
+            <Stack>
+              <Skeleton height="40px" mt="5" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+            </Stack>
+          )}
         </Box>
       </Flex>
     </Flex>

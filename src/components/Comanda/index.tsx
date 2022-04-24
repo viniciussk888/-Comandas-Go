@@ -24,6 +24,7 @@ import {
 import { useState } from "react";
 import { SearchBox } from "../Header/SearchBox";
 import { Modal } from "../Modal";
+import { formatValue } from "../../utils/formatValue";
 
 interface Items {
   id: string;
@@ -72,7 +73,7 @@ export function Comanda({
         </StatLabel>
         <StatHelpText color="black">Contato: {contact}</StatHelpText>
         <StatNumber mb={2} color="black">
-          Total R$ {sumTotalItems().toPrecision(4)}
+        {formatValue(sumTotalItems())}
         </StatNumber>
         <Menu>
           <MenuButton as={Button} colorScheme="pink">

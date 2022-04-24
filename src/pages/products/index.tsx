@@ -1,18 +1,25 @@
 import {
   Box,
   Button,
-  Checkbox,
+  Modal,
+  ModalOverlay,
   Flex,
+  ModalContent,
   Heading,
   Icon,
   Skeleton,
   Stack,
   Table,
+  ModalBody,
   Tbody,
   Td,
+  ModalCloseButton,
+  ModalFooter,
   Text,
+  ModalHeader,
   Th,
   Thead,
+  useDisclosure,
   Tr,
   useBreakpointValue,
 } from "@chakra-ui/react";
@@ -23,23 +30,55 @@ import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { SideBar } from "../../components/Sidebar";
 import { supabase } from "../../utils/supabaseClient";
+import { formatValue } from "../../utils/formatValue";
+import { useRouter } from 'next/router'
 
 export default function Home() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
+
+  const router = useRouter()
+
+  const Gotoedit = (id)=>{
+    router.push({
+      pathname: '/products/create',
+      query: { id },
+    })
+  }
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true)
     async function fetchData() {
       const { status, data } = await supabase.from("Products");
       if (status === 200) {
         setProducts(data);
       }
+      setLoading(false)
     }
     fetchData();
   }, []);
+
+  const deleteProduct = async (id) => {
+    setLoading(true);
+    const { status, error } = await supabase
+      .from("Products")
+      .delete()
+      .match({ id });
+    if (error) {
+      console.log(error);
+    }
+    if (status === 200) {
+      setProducts(products.filter((product) => product.id !== id));
+      onClose()
+    }
+    setLoading(false);
+  }
+
 
   return (
     <Box>
@@ -66,7 +105,7 @@ export default function Home() {
               </Button>
             </Link>
           </Flex>
-          {products.length > 0 ? (
+          {products.length > 0 && (
             <Table colorScheme="whiteAlpha">
               <Thead>
                 <Tr>
@@ -85,7 +124,7 @@ export default function Home() {
                     {isWideVersion && (
                       <Td px={["4", "4", "6"]}>{product.description}</Td>
                     )}
-                    <Td px={["4", "4", "6"]}>R$ {Number(product.value).toPrecision(3)}</Td>
+                    <Td px={["4", "4", "6"]}>{formatValue(product.value)}</Td>
                     <Td px={["4", "4", "6"]}>
                       <Button
                         mr="3"
@@ -94,6 +133,8 @@ export default function Home() {
                         fontSize="sm"
                         colorScheme="purple"
                         leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                        onClick={()=>Gotoedit(product.id)}
+                  
                       >
                         Editar
                       </Button>
@@ -103,15 +144,32 @@ export default function Home() {
                         fontSize="sm"
                         colorScheme="red"
                         leftIcon={<Icon as={RiDeleteBin3Line} fontSize="16" />}
+                        onClick={onOpen}
+
                       >
                         Excluir
                       </Button>
                     </Td>
+                    <Modal onClose={onClose} isOpen={isOpen} isCentered>
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader color="black">Atenção!</ModalHeader>
+                        <ModalCloseButton color="black" />
+                        <ModalBody color="black">
+                          Deseja realmente deletar o produto?
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button disabled={loading} color="black" mr={3} onClick={onClose}>Fechar</Button>
+                          <Button isLoading={loading} color="white" colorScheme='red' backgroundColor="red" onClick={() => deleteProduct(product.id)}>Confirma</Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
-          ) : (
+          )}
+          {loading && (
             <Stack>
               <Skeleton height="40px" />
               <Skeleton height="40px" />
@@ -119,6 +177,13 @@ export default function Home() {
               <Skeleton height="40px" />
               <Skeleton height="40px" />
             </Stack>
+          )}
+          {products.length === 0 && !loading && (
+            <Flex justify="center" align="center" mt="8">
+              <Text fontSize="xl" color="gray.500">
+                Nenhum produto cadastrado
+              </Text>
+            </Flex>
           )}
 
           <Pagination />

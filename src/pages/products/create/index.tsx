@@ -12,18 +12,21 @@ import Link from "next/link";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { Input } from "../../components/form/Input";
-import { Header } from "../../components/Header";
-import { SideBar } from "../../components/Sidebar";
+import { Input } from "../../../components/form/Input";
+import { Header } from "../../../components/Header";
+import { SideBar } from "../../../components/Sidebar";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { supabase } from "../../utils/supabaseClient";
-import { useAlert } from "../../contexts/AlertContext";
+import { supabase } from "../../../utils/supabaseClient";
+import { useAlert } from "../../../contexts/AlertContext";
+import { useRouter } from 'next/router';
+import { useEffect } from "react";
 
 type CreateProductData = {
   name: string;
   description: string;
   value: number;
 };
+
 
 const createUserSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
@@ -33,18 +36,51 @@ const createUserSchema = yup.object().shape({
 
 export default function CreateProduct() {
   const { setMessage,setOpenAlert } = useAlert()
-  const { register, handleSubmit, formState,reset } = useForm({
+  const { register, handleSubmit, formState,reset,setValue,getValues } = useForm({
     resolver: yupResolver(createUserSchema),
   });
+  const router = useRouter()
+  const { id } = router.query
+  useEffect(()=>{
+    async function getProduct() {
+      if(id){
+        const { status, data } = await  supabase.from("Products").select().match({id})
+        if(status === 200 && data){
+        setValue("name", data[0].name)
+        setValue("value", data[0].value)
+        setValue("description", data[0].description)
+        }
+      }  
+    }
+    getProduct();
+  },[]) 
+
+  const updateProduct = async()=> {
+    if(id){
+      const {status} = await supabase.from("Products").update({
+        name: getValues("name"),
+        value: getValues("value"),
+        description: getValues("description")
+      }).match({id}) 
+      if (status === 200) {
+        setOpenAlert(true);
+        setMessage('Produto editado com sucesso');
+      }  
+    }
+  }
 
   const { errors } = formState;
 
   const handleCreateUser: SubmitHandler<CreateProductData> = async (
     product
   ) => {
+    if(id){
+      return updateProduct();
+    }
     const { status, error } = await supabase
       .from("Products")
       .insert(product);
+      console.log({id});
     if (error) {
       setOpenAlert(true);
       setMessage(error.message);
@@ -55,6 +91,7 @@ export default function CreateProduct() {
       reset()
       setMessage('Produto criado com sucesso');
     }
+
   };
 
   return (

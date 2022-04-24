@@ -1,13 +1,21 @@
-import { Flex, Icon, Input } from "@chakra-ui/react";
+import { Button, Flex, Icon, Input } from "@chakra-ui/react";
+import { useState } from "react";
 import { RiSearchLine } from "react-icons/ri";
 
-export function SearchBox () {
+interface SearchBoxProps {
+  searchProducts: (value: string) => void;
+  mb?: string;
+}
+
+export function SearchBox({ searchProducts, mb }: SearchBoxProps) {
+  const [searchTerm, setSearchTerm] = useState('')
   return (
     <Flex
       as="label"
       flex="1"
       py="4"
       px="8"
+      mb={mb}
       ml="6"
       maxW="400"
       alignSelf="center"
@@ -17,6 +25,9 @@ export function SearchBox () {
       borderRadius="full"
     >
       <Input
+        onChange={e => setSearchTerm(e.target.value)}
+        value={searchTerm}
+        onBlur={() => searchProducts(searchTerm)}
         color="gray.50"
         variant="unstyled"
         px="4"
@@ -24,8 +35,7 @@ export function SearchBox () {
         placeholder="Digite o nome do produto"
         _placeholder={{ color: "gray.400" }}
       />
-
-      <Icon as={RiSearchLine} fontSize="20" />
+      <Button onClick={() => setSearchTerm(searchTerm)} backgroundColor='transparent' padding={0} color="#fff" leftIcon={<Icon as={RiSearchLine} fontSize="20" />}></Button>
     </Flex>
   )
 }
