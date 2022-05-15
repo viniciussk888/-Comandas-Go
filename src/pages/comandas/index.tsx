@@ -43,7 +43,7 @@ export default function Comandas() {
         <Box
           flex="1" borderRadius="8" bg="gray.800" p="8"
         >
-          <Flex w="100%" justifyContent={"space-between"} flexDirection={"row"}>
+          <Flex w="100%" justifyContent={"space-between"} flexDirection={"row"} mb="4">
             <Heading size="lg" fontWeight="normal">
               Comandas abertas
             </Heading>

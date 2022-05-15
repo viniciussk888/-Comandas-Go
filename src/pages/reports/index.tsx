@@ -1,4 +1,5 @@
-import { Box, Flex, Heading, Input, } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Heading, ModalBody, ModalCloseButton, ModalContent, ModalHeader, Select, Stack, Table, Tbody, Td, Th, Thead, Tr, Text} from "@chakra-ui/react";
+import { Input } from "../../components/form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/Sidebar";
 
@@ -14,11 +15,59 @@ export default function Relatorios() {
               Relatórios
             </Heading>
           </Flex>
+          <Box display="flex" flexDirection="row" alignItems="center" mt="10">
           <Input
             name="date"
             type="date"
-            maxW='320px'
+            maxW='270px'
+            label="Data inicial"
           />
+          <Input
+            name="date"
+            type="date"
+            maxW='270px'
+            label="Data final"
+          />
+          <Select placeholder='Selecione o status' focusBorderColor="pink.500" bgColor="gray.900"
+          variant="filled" maxW='240px' size='lg' mt="8" mr="12">
+            <option value="dinheiro" style={{ backgroundColor: '#1F2029'}}>Dinheiro</option>
+            <option value="pix" style={{ backgroundColor: '#1F2029'}}>Pix</option>
+            <option value="cartao-debito" style={{ backgroundColor: '#1F2029' }}>Cartão Debito</option>
+            <option value="cartao-credito" style={{ backgroundColor: '#1F2029' }}>Cartão Credito</option>
+          </Select>
+          <Button colorScheme='pink.500' bg="pink.500" size='lg' alignItems="center" width='200px' mt="8" fontWeight="normal">
+            Filtrar
+          </Button>
+          </Box>
+          <Box mt="12">
+          <Table colorScheme="whiteAlpha">
+            <Thead>
+              <Tr>
+                <Th>Comanda</Th>
+                <Th>Cliente</Th>
+                <Th>Crédito</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td>
+                  <Text colorScheme="bold">Comanda 01</Text>
+                </Td>
+                <Td>
+                  <Text colorScheme="bold">Alberto</Text>
+                </Td>
+                <Td>Valor</Td>
+              </Tr>
+              <Tr>
+                <Td>
+                </Td>
+                <Td>
+                </Td>
+                <Td><Text fontWeight="bold">Total:</Text></Td>
+              </Tr>
+            </Tbody>
+          </Table>
+          </Box>
         </Box>
       </Flex>
     </Box>
