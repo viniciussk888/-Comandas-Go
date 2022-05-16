@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   Button,
+  Icon,
   Modal as ModalChackra,
   ModalBody,
   ModalCloseButton,
@@ -22,6 +23,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { RiDeleteBin3Line } from "react-icons/ri";
 import { Input } from "../../components/form/Input";
 import { useAlert } from "../../contexts/AlertContext";
 import { formatValue } from "../../utils/formatValue";
@@ -36,7 +38,7 @@ interface Items {
 }
 
 interface ModalProps {
-  type: "add-product" | "view-items" | "close-comand" | null;
+  type: "add-product" | "view-items" | "close-comand" | "cancel-comand" | null;
   openModal: boolean;
   number?: number;
   items?: Items[];
@@ -231,7 +233,7 @@ export function Modal({
         );
       case "view-items":
         return (
-          <ModalContent backgroundColor="gray.800">
+          <ModalContent backgroundColor="gray.800" maxWidth="550px">
             <ModalHeader color="white">
               <Badge fontSize="0.8em" colorScheme="red">
                 Items da comanda Nº {number}
@@ -247,6 +249,7 @@ export function Modal({
                     <Th color="white" isNumeric>
                       Valor
                     </Th>
+                    <Th></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -257,6 +260,17 @@ export function Modal({
                       <Td color="white" isNumeric>
                         {formatValue(item?.value)}
                       </Td>
+                      <Td>
+                        <Button
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        colorScheme="red"
+                        leftIcon={<Icon as={RiDeleteBin3Line} fontSize="16" />}
+                        onClick={onOpen}
+                      >
+                        Excluir
+                      </Button></Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -339,12 +353,77 @@ export function Modal({
             </ModalFooter>
           </ModalContent>
         );
+        case "cancel-comand":
+        return (
+          <ModalContent backgroundColor="gray.800">
+            <ModalHeader color="black">
+              <Badge fontSize="0.8em" colorScheme="red">
+                Fechar comanda Nº {number}
+              </Badge>
+            </ModalHeader>
+            <ModalCloseButton color="white" />
+            <ModalBody>
+              <Table size="md">
+                <Thead>
+                  <Tr>
+                    <Th color="white">Nome</Th>
+                    <Th color="white">Descrição</Th>
+                    <Th color="white" isNumeric>
+                      Valor
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {items.map((item) => (
+                    <Tr key={item.id}>
+                      <Td color="white">{item.name}</Td>
+                      <Td color="white">{item.description}</Td>
+                      <Td color="white" isNumeric>
+                        {formatValue(item?.value)}
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+                <Tfoot>
+                  <Tr>
+                    <Th></Th>
+                    <Th></Th>
+                    <Th fontSize='1rem' color="white" isNumeric>
+                      Total: {formatValue(sumTotalItems())}
+                    </Th>
+                  </Tr>
+                </Tfoot>
+              </Table>
+              <Stack mt='5' spacing={3}>
+                <Select onChange={(e) => setPaymentMethod(e.target.value)} variant="outline" placeholder="Forma de pagamento">
+                  <option value="dinheiro" style={{ backgroundColor: '#1F2029' }}>Dinheiro</option>
+                  <option value="pix" style={{ backgroundColor: '#1F2029' }}>Pix</option>
+                  <option value="cartao-debito" style={{ backgroundColor: '#1F2029' }}>Cartão Debito</option>
+                  <option value="cartao-credito" style={{ backgroundColor: '#1F2029' }}>Cartão Credito</option>
+                </Select>
+                <Input onChange={e => setObs(e.target.value)} value={obs} name="obs" label="Observação" />
+              </Stack>
+            </ModalBody>
+            <ModalFooter color="black">
+              <Button
+                _hover={{
+                  bgColor: "red.500",
+                }}
+                color="#fff"
+                background="red"
+                onClick={closeComande}
+                isLoading={loading}
+              >
+                Cancelar comanda
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        );
       default:
         <></>;
         break;
-    }
+    }  
   };
-
   return (
     <ModalChackra isCentered isOpen={isOpen} onClose={closeModal}>
       {overlay}

@@ -1,9 +1,30 @@
-import { Badge, Box, Button, Flex, Heading, ModalBody, ModalCloseButton, ModalContent, ModalHeader, Select, Stack, Table, Tbody, Td, Th, Thead, Tr, Text} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, ModalBody, ModalCloseButton, ModalContent, ModalHeader, Select, Stack, Table, Tbody, Td, Th, Thead, Tr, Text} from "@chakra-ui/react";
+import { format } from "path";
+import { useEffect, useState } from "react";
 import { Input } from "../../components/form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/Sidebar";
+import { supabase } from "../../utils/supabaseClient";
 
 export default function Relatorios() {
+  const [reports, setReports] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true)
+      try {
+        const { status, data } = await supabase.from("Sales").select()
+        if (status === 200) {
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchReports()
+  }, [])
   return (
     <Box>
       <Header />

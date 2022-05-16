@@ -98,6 +98,11 @@ export function Comanda({
             >
               Ver items
             </MenuItem>
+            <MenuItem color="black" onClick={() => {
+                setTypeModal("close-comand");
+                setOpenModal(true);
+              }}>Cancelar comanda
+            </MenuItem>
             <MenuItem color="red" onClick={() => {
                 setTypeModal("close-comand");
                 setOpenModal(true);
