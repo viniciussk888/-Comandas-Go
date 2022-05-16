@@ -55,6 +55,8 @@ export function Modal({
   const { setOpenAlert, setMessage } = useAlert();
   const [searchLoading, setSearchLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [obs, setObs] = useState("");
 
   const OverlayOne = () => (
     <ModalOverlay
@@ -124,6 +126,55 @@ export function Modal({
     } catch (error) {
       setLoading(false)
       console.log(error)
+    }
+  }
+
+  const closeComande = async () => {
+    if (!paymentMethod) {
+      setOpenAlert(true)
+      setMessage("Por favor, selecione um método de pagamento")
+      return
+    }
+    setLoading(true)
+    try {
+      const response = await supabase
+        .from("Comands")
+        .select("open")
+        .eq("number", number);
+      if (response.status === 200 && response.data.length > 0 && response.data[0].open) {
+        if (items.length === 0) {
+          setOpenAlert(true)
+          setMessage("Nenhum produto adicionado")
+          setLoading(false)
+          return
+        } else {
+          const { status } = await supabase.from("Comands").update({
+            open: false
+          }).match({ number })
+          if (status === 200) {
+            const { status } = await supabase.from('Sales').insert({
+              items: items,
+              comand_number: number,
+              name: response.data[0].name || "Consumidor",
+              total: items.reduce((acc, item) => acc + item.value, 0),
+              payment_method: paymentMethod,
+              client_document: response.data[0].document || "Doc. não informado",
+              client_contact: response.data[0].contact || "Contato não informado",
+              user: 'default',
+              obs
+            });
+            if (status === 201) {
+              setOpenAlert(true)
+              setMessage("Comanda fechada com sucesso")
+              onClose()
+              window.location.reload()
+            }
+          }
+        }
+      }
+
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -264,13 +315,13 @@ export function Modal({
                 </Tfoot>
               </Table>
               <Stack mt='5' spacing={3}>
-                <Select variant="outline" placeholder="Forma de pagamento">
+                <Select onChange={(e) => setPaymentMethod(e.target.value)} variant="outline" placeholder="Forma de pagamento">
                   <option value="dinheiro" style={{ backgroundColor: '#1F2029' }}>Dinheiro</option>
                   <option value="pix" style={{ backgroundColor: '#1F2029' }}>Pix</option>
                   <option value="cartao-debito" style={{ backgroundColor: '#1F2029' }}>Cartão Debito</option>
                   <option value="cartao-credito" style={{ backgroundColor: '#1F2029' }}>Cartão Credito</option>
                 </Select>
-                <Input name="obs" label="Observação" />
+                <Input onChange={e => setObs(e.target.value)} value={obs} name="obs" label="Observação" />
               </Stack>
             </ModalBody>
             <ModalFooter color="black">
@@ -280,7 +331,8 @@ export function Modal({
                 }}
                 color="#fff"
                 background="red"
-                onClick={() => { }}
+                onClick={closeComande}
+                isLoading={loading}
               >
                 Finaliza comanda
               </Button>

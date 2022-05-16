@@ -10,11 +10,34 @@ import {
   Tr,
   Text,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/Sidebar";
 import { formatValue } from "../../utils/formatValue";
+import { supabase } from "../../utils/supabaseClient";
+import { isEqual, format } from 'date-fns';
 
 export default function Caixa() {
+  const [caixa, setCaixa] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCaixa = async () => {
+      setLoading(true)
+      try {
+        const { status, data } = await supabase.from("Sales").select()
+        if (status === 200) {
+          setCaixa(data.filter(sale => format(new Date(sale.created_at), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')))
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCaixa()
+  }, [])
+
   return (
     <Box>
       <Header />
@@ -32,24 +55,32 @@ export default function Caixa() {
                 <Th>Comanda</Th>
                 <Th>Cliente</Th>
                 <Th>Crédito</Th>
+                <Th>Forma de pagamento</Th>
               </Tr>
             </Thead>
             <Tbody>
+              {caixa.map((item, index) => (
+                <Tr key={item.id}>
+                  <Td>
+                    <Text colorScheme="bold">Comanda {item.comand_number}</Text>
+                  </Td>
+                  <Td>
+                    <Text colorScheme="bold">{item.name}</Text>
+                  </Td>
+                  <Td>
+                    {item.payment_method}
+                  </Td>
+                  <Td>{formatValue(item.total)}</Td>
+                </Tr>
+              ))}
               <Tr>
                 <Td>
-                  <Text colorScheme="bold">Comanda 01</Text>
                 </Td>
-                <Td>
-                  <Text colorScheme="bold">Alberto</Text>
-                </Td>
-                <Td>{formatValue(100)}</Td>
-              </Tr>
-              <Tr>
                 <Td>
                 </Td>
                 <Td>
                 </Td>
-                <Td><Text fontWeight="bold">Total: {formatValue(100)}</Text></Td>
+                <Td><Text fontWeight="bold">Total: {formatValue(caixa.reduce((acc, item) => acc + item.total, 0))}</Text></Td>
               </Tr>
             </Tbody>
           </Table>
