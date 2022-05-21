@@ -25,6 +25,8 @@ import { useState } from "react";
 import { SearchBox } from "../Header/SearchBox";
 import { Modal } from "../Modal";
 import { formatValue } from "../../utils/formatValue";
+import { supabase } from "../../utils/supabaseClient";
+import { useAlert } from "../../contexts/AlertContext";
 
 interface Items {
   id: string;
@@ -54,9 +56,27 @@ export function Comanda({
 }: ComandaProps) {
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState(null);
+  const { setOpenAlert, setMessage } = useAlert();
 
   const sumTotalItems = () => {
     return items.reduce((acc, item) => acc + item.value, 0);
+  }
+
+  const cancelComand = async () => {
+    if (window.confirm(`Você deseja realmente CANCELAR COMANDA N° ${number}?`)) {
+      try {
+        const { status } = await supabase.from("Comands").update({
+          open: false
+        }).match({ number })
+        if (status === 200) {
+          window.location.reload();
+          setOpenAlert(true)
+          setMessage("Comanda cancelada com sucesso!")
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   return (
@@ -73,7 +93,7 @@ export function Comanda({
         </StatLabel>
         <StatHelpText color="black">Contato: {contact}</StatHelpText>
         <StatNumber mb={2} color="black">
-        {formatValue(sumTotalItems())}
+          {formatValue(sumTotalItems())}
         </StatNumber>
         <Menu>
           <MenuButton as={Button} colorScheme="pink">
@@ -98,15 +118,12 @@ export function Comanda({
             >
               Ver items
             </MenuItem>
-            <MenuItem color="black" onClick={() => {
-                setTypeModal("close-comand");
-                setOpenModal(true);
-              }}>Cancelar comanda
+            <MenuItem color="black" onClick={() => cancelComand()}>Cancelar comanda
             </MenuItem>
             <MenuItem color="red" onClick={() => {
-                setTypeModal("close-comand");
-                setOpenModal(true);
-              }}>Fechar comanda</MenuItem>
+              setTypeModal("close-comand");
+              setOpenModal(true);
+            }}>Fechar comanda</MenuItem>
           </MenuList>
         </Menu>
       </Stat>
