@@ -9,6 +9,8 @@ import {
   Thead,
   Tr,
   Text,
+  Skeleton,
+  Stack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Header } from "../../components/Header";
@@ -49,41 +51,52 @@ export default function Caixa() {
               Caixa
             </Heading>
           </Flex>
-          <Table colorScheme="whiteAlpha">
-            <Thead>
-              <Tr>
-                <Th>Comanda</Th>
-                <Th>Cliente</Th>
-                <Th>Crédito</Th>
-                <Th>Forma de pagamento</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {caixa.map((item, index) => (
-                <Tr key={item.id}>
-                  <Td>
-                    <Text colorScheme="bold">Comanda {item.comand_number}</Text>
-                  </Td>
-                  <Td>
-                    <Text colorScheme="bold">{item.name}</Text>
-                  </Td>
-                  <Td>
-                    {item.payment_method}
-                  </Td>
-                  <Td>{formatValue(item.total)}</Td>
+          {loading ? (
+            <Stack>
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+              <Skeleton height="40px" />
+            </Stack>
+          ) : (
+            <Table colorScheme="whiteAlpha">
+              <Thead>
+                <Tr>
+                  <Th>Comanda</Th>
+                  <Th>Cliente</Th>
+                  <Th>Forma de pagamento</Th>
+                  <Th>Crédito</Th>
                 </Tr>
-              ))}
-              <Tr>
-                <Td>
-                </Td>
-                <Td>
-                </Td>
-                <Td>
-                </Td>
-                <Td><Text fontWeight="bold">Total: {formatValue(caixa.reduce((acc, item) => acc + item.total, 0))}</Text></Td>
-              </Tr>
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {caixa.map((item, index) => (
+                  <Tr key={item.id}>
+                    <Td>
+                      <Text colorScheme="bold">Comanda {item.comand_number}</Text>
+                    </Td>
+                    <Td>
+                      <Text colorScheme="bold">{item.name}</Text>
+                    </Td>
+                    <Td>
+                      {item.payment_method}
+                    </Td>
+                    <Td>{formatValue(item.total)}</Td>
+                  </Tr>
+                ))}
+                <Tr>
+                  <Td>
+                  </Td>
+                  <Td>
+                  </Td>
+                  <Td>
+                  </Td>
+                  <Td><Text fontWeight="bold">Total: {formatValue(caixa.reduce((acc, item) => acc + item.total, 0))}</Text></Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          )}
+
         </Box>
       </Flex>
     </Box>

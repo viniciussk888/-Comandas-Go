@@ -80,7 +80,7 @@ export function Comanda({
   }
 
   return (
-    <Flex mt={6} mr={3} maxWidth="320px" bg={"gray.50"} borderRadius={8} p={4}>
+    <Flex mt={6} mr={3} maxWidth="320px" height='200' bg={"gray.50"} borderRadius={8} p={4}>
       <Stat>
         <StatNumber color="black">
           Comanda{" "}

@@ -141,7 +141,7 @@ export function Modal({
     try {
       const response = await supabase
         .from("Comands")
-        .select("open")
+        .select("*")
         .eq("number", number);
       if (response.status === 200 && response.data.length > 0 && response.data[0].open) {
         if (items.length === 0) {
