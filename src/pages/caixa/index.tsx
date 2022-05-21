@@ -90,8 +90,9 @@ export default function Caixa() {
                   <Td>
                   </Td>
                   <Td>
+                    <Text fontWeight="bold">Total:</Text>
                   </Td>
-                  <Td><Text fontWeight="bold">Total: {formatValue(caixa.reduce((acc, item) => acc + item.total, 0))}</Text></Td>
+                  <Td><Text fontWeight="bold">{formatValue(caixa.reduce((acc, item) => acc + item.total, 0))}</Text></Td>
                 </Tr>
               </Tbody>
             </Table>
