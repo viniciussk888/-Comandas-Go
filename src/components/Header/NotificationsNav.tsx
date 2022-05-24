@@ -1,7 +1,13 @@
 import { HStack, Icon } from "@chakra-ui/react";
-import { RiNotificationLine, RiUserLine } from "react-icons/ri";
+import { RiNotificationLine, RiLogoutBoxLine } from "react-icons/ri";
+import Router from 'next/router';
+
 
 export function NotificationsNav () {
+  const logout = () =>{
+    localStorage.removeItem('@comandasgo')
+    Router.push('/');
+  }
   return (
     <HStack
       spacing={["6", "8"]}
@@ -13,7 +19,7 @@ export function NotificationsNav () {
       borderColor="gray.700"
     >
       <Icon as={RiNotificationLine} fontSize="20" />
-      <Icon as={RiUserLine} fontSize="20" />
+      <Icon as={RiLogoutBoxLine} fontSize="20" onClick={logout} cursor="pointer" />
     </HStack>
   )
 }

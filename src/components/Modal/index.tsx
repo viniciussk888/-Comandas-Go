@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   Button,
+  Icon,
   Modal as ModalChackra,
   ModalBody,
   ModalCloseButton,
@@ -22,6 +23,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { RiDeleteBin3Line } from "react-icons/ri";
 import { Input } from "../../components/form/Input";
 import { useAlert } from "../../contexts/AlertContext";
 import { formatValue } from "../../utils/formatValue";
@@ -36,7 +38,7 @@ interface Items {
 }
 
 interface ModalProps {
-  type: "add-product" | "view-items" | "close-comand" | null;
+  type: "add-product" | "view-items" | "close-comand" | "cancel-comand" | null;
   openModal: boolean;
   number?: number;
   items?: Items[];
@@ -55,6 +57,8 @@ export function Modal({
   const { setOpenAlert, setMessage } = useAlert();
   const [searchLoading, setSearchLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [obs, setObs] = useState("");
 
   const OverlayOne = () => (
     <ModalOverlay
@@ -127,6 +131,75 @@ export function Modal({
     }
   }
 
+  const closeComande = async () => {
+    if (!paymentMethod) {
+      setOpenAlert(true)
+      setMessage("Por favor, selecione um método de pagamento")
+      return
+    }
+    setLoading(true)
+    try {
+      const response = await supabase
+        .from("Comands")
+        .select("*")
+        .eq("number", number);
+      if (response.status === 200 && response.data.length > 0 && response.data[0].open) {
+        if (items.length === 0) {
+          setOpenAlert(true)
+          setMessage("Nenhum produto adicionado")
+          setLoading(false)
+          return
+        } else {
+          const { status } = await supabase.from("Comands").update({
+            open: false
+          }).match({ number })
+          if (status === 200) {
+            const { status } = await supabase.from('Sales').insert({
+              items: items,
+              comand_number: number,
+              name: response.data[0].name || "Consumidor",
+              total: items.reduce((acc, item) => acc + item.value, 0),
+              payment_method: paymentMethod,
+              client_document: response.data[0].document || "Doc. não informado",
+              client_contact: response.data[0].contact || "Contato não informado",
+              user: 'default',
+              obs
+            });
+            if (status === 201) {
+              setOpenAlert(true)
+              setMessage("Comanda fechada com sucesso")
+              onClose()
+              window.location.reload()
+            }
+          }
+        }
+      }
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteItem = async (id: string) => {
+    setLoading(true)
+    try {
+      const newItems = items.filter(item => item.id !== id)
+      const { status } = await supabase.from("Comands").update({
+        items: newItems
+      }).match({ number })
+      if (status === 200) {
+        setOpenAlert(true)
+        setMessage("Produto removido com sucesso")
+        onClose()
+        window.location.reload()
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const renderContentModal = () => {
     switch (type) {
       case "add-product":
@@ -180,7 +253,7 @@ export function Modal({
         );
       case "view-items":
         return (
-          <ModalContent backgroundColor="gray.800">
+          <ModalContent backgroundColor="gray.800" maxWidth="550px">
             <ModalHeader color="white">
               <Badge fontSize="0.8em" colorScheme="red">
                 Items da comanda Nº {number}
@@ -196,6 +269,7 @@ export function Modal({
                     <Th color="white" isNumeric>
                       Valor
                     </Th>
+                    <Th></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -206,6 +280,17 @@ export function Modal({
                       <Td color="white" isNumeric>
                         {formatValue(item?.value)}
                       </Td>
+                      <Td>
+                        <Button
+                          size="sm"
+                          fontSize="sm"
+                          colorScheme="red"
+                          leftIcon={<Icon as={RiDeleteBin3Line} fontSize="16" />}
+                          isLoading={loading}
+                          onClick={() => deleteItem(item.id)}
+                        >
+                          Excluir
+                        </Button></Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -264,13 +349,13 @@ export function Modal({
                 </Tfoot>
               </Table>
               <Stack mt='5' spacing={3}>
-                <Select variant="outline" placeholder="Forma de pagamento">
+                <Select onChange={(e) => setPaymentMethod(e.target.value)} variant="outline" placeholder="Forma de pagamento">
                   <option value="dinheiro" style={{ backgroundColor: '#1F2029' }}>Dinheiro</option>
                   <option value="pix" style={{ backgroundColor: '#1F2029' }}>Pix</option>
                   <option value="cartao-debito" style={{ backgroundColor: '#1F2029' }}>Cartão Debito</option>
                   <option value="cartao-credito" style={{ backgroundColor: '#1F2029' }}>Cartão Credito</option>
                 </Select>
-                <Input name="obs" label="Observação" />
+                <Input onChange={e => setObs(e.target.value)} value={obs} name="obs" label="Observação" />
               </Stack>
             </ModalBody>
             <ModalFooter color="black">
@@ -280,7 +365,8 @@ export function Modal({
                 }}
                 color="#fff"
                 background="red"
-                onClick={() => { }}
+                onClick={closeComande}
+                isLoading={loading}
               >
                 Finaliza comanda
               </Button>
@@ -292,7 +378,6 @@ export function Modal({
         break;
     }
   };
-
   return (
     <ModalChackra isCentered isOpen={isOpen} onClose={closeModal}>
       {overlay}

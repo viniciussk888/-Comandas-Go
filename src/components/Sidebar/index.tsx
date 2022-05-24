@@ -1,9 +1,18 @@
 import { Box, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, useBreakpointValue } from "@chakra-ui/react";
+import Router from "next/router";
+import { useEffect, useState } from "react";
 import { useSidebarDrawer } from "../../contexts/SidebarDrawerContext";
 import { SidebarNav } from "./SidbarNav";
 
 export function SideBar() {
   const { isOpen, onClose } = useSidebarDrawer()
+
+  useEffect(()=>{
+    const isAuth = JSON.parse(localStorage.getItem('@comandasgo'))
+    if(!isAuth){
+      Router.back();
+    }
+  },[])
 
   const isDrawerSidebar = useBreakpointValue({
     base: true,

@@ -43,7 +43,7 @@ export default function Comandas() {
         <Box
           flex="1" borderRadius="8" bg="gray.800" p="8"
         >
-          <Flex w="100%" justifyContent={"space-between"} flexDirection={"row"}>
+          <Flex w="100%" justifyContent={"space-between"} flexDirection={"row"} mb="4">
             <Heading size="lg" fontWeight="normal">
               Comandas abertas
             </Heading>
@@ -57,6 +57,7 @@ export default function Comandas() {
           {comandas.length > 0 ? (
             <SimpleGrid
               maxHeight="600px"
+              height='500px'
               overflow="auto"
               columns={isWideVersion ? 1 : 3}
               spacing={2}
